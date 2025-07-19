@@ -8,8 +8,8 @@
         </div>
 
         <ul class="todo-list">
-            <li v-for="(todo, index) in todos" :key="index" :class="{done: todo.complated}" >
-                <input type="checkbox" v-model="todo.complated" />
+            <li v-for="(todo, index) in todos" :key="index" :class="{done: todo.completed}" >
+                <input type="checkbox" :checked="todo.completed" @change="completeTodo(todo.id)" />
                 <span>{{todo.content}}</span>
                 <button class="delete" @click="deleteTodo(todo.id)">删除</button>
             </li>
@@ -26,7 +26,9 @@
         data() {
             return {
                 newTodo: '',
-                todos: []
+                todos: [],
+                pageNumber: 1,
+                pageSize: 100
             }
         },
         methods: {
@@ -35,15 +37,26 @@
                 if (content === '') {
                     return
                 }
-                const data = await apiFetch('POST', '/api/todo', null, { content })
-                
-                this.todos.unshift(data)
+                await apiFetch('POST', '/api/todo', null, { content })
                 this.newTodo = ''
+                this.loadTodos()
             },
-            deleteTodo(index) {
-                this.todos.splice(index, 1)
-            }
-        }
+            async loadTodos() {
+                const data = await apiFetch('GET', '/api/todo', {pageNumber: this.pageNumber, pageSize: this.pageSize})
+                this.todos = data
+            },
+            async deleteTodo(id) {
+                await apiFetch('DELETE', `/api/todo/${id}`)
+                this.loadTodos()
+            },
+            async completeTodo(id) {
+                await apiFetch('PUT', `/api/todo/${id}/complete`)
+                this.loadTodos()
+            },
+        }, 
+        mounted() {
+            this.loadTodos()
+        },
     }
 </script>
 
