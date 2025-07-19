@@ -4,17 +4,11 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { computed } from 'vue'
     import { loadingStore } from '../utils/loading'
 
-    export default {
-        name: 'Loading',
-        computed: {
-            isLoading() {
-                return loadingStore.state.loading
-            }
-        }
-    }
+    const isLoading = computed(() => loadingStore.loading.value)
 </script>
 
 <style scoped>

@@ -6,10 +6,9 @@ export async function apiFetch(method, url, query=undefined, body=undefined, hea
     try {
         let fullUrl = url
         if (!query) {
-            query = {
-                delay: Math.floor(Math.random() * 1000) + 1
-            }
+            query = {}
         }
+        query.delay = Math.floor(Math.random() * 100) + 1
         if (query && typeof query === 'object') {
             const queryStr = new URLSearchParams(query).toString()
             fullUrl += '?' + queryStr

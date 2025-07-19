@@ -19,45 +19,43 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, onMounted } from 'vue'
     import { apiFetch } from '../utils/api'
-    export default {
-        name: 'TodoList',
-        data() {
-            return {
-                newTodo: '',
-                todos: [],
-                pageNumber: 1,
-                pageSize: 100
-            }
-        },
-        methods: {
-            async addTodo() {
-                const content = this.newTodo.trim()
-                if (content === '') {
-                    return
-                }
-                await apiFetch('POST', '/api/todo', null, { content })
-                this.newTodo = ''
-                this.loadTodos()
-            },
-            async loadTodos() {
-                const data = await apiFetch('GET', '/api/todo', {pageNumber: this.pageNumber, pageSize: this.pageSize})
-                this.todos = data
-            },
-            async deleteTodo(id) {
-                await apiFetch('DELETE', `/api/todo/${id}`)
-                this.loadTodos()
-            },
-            async completeTodo(id) {
-                await apiFetch('PUT', `/api/todo/${id}/complete`)
-                this.loadTodos()
-            },
-        }, 
-        mounted() {
-            this.loadTodos()
-        },
+
+    const newTodo = ref('')
+    const todos = ref([])
+    const pageNumber = ref(1)
+    const pageSize = ref(100)
+
+    const loadTodos = async () => {
+        todos.value = await apiFetch('GET', '/api/todo', {
+            pageNumber: pageNumber.value,
+            pageSize: pageSize.value,
+        })
     }
+
+    const addTodo = async() => {
+        const content = newTodo.value.trim()
+        if (content === '') return
+        await apiFetch('POST', '/api/todo', null, { content })
+        newTodo.value = ''
+        loadTodos()
+    }
+
+    const deleteTodo = async (id) => {
+        await apiFetch('DELETE', `/api/todo/${id}`)
+        loadTodos()
+    }
+
+    const completeTodo = async (id) => {
+        await apiFetch('PUT', `/api/todo/${id}/complete`)
+        loadTodos()
+    }
+
+    onMounted(() => {
+        loadTodos()
+    })
 </script>
 
 <style scoped>

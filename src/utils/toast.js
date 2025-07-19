@@ -1,14 +1,18 @@
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-export const toastState = reactive({
-    visible: false,
-    message: ''
-})
+const visible = ref(false)
+const message = ref('')
 
-export function showErrorToast(message) {
-    toastState.message = message
-    toastState.visible = true
+const showErrorToast = (message) => {
+    message.value = message
+    visible.value = true
     setTimeout(() => {
-        toastState.visible = false
+        visible.value = false
     }, 3000)
+}
+
+export {
+    visible,
+    message,
+    showErrorToast
 }

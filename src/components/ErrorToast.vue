@@ -4,20 +4,8 @@
     </div>
 </template>
 
-<script>
-    import { toastState } from '../utils/toast'
-
-    export default {
-        name: 'ErrorToast',
-        computed: {
-            visible() {
-                return toastState.visible
-            },
-            message() {
-                return toastState.message
-            }
-        }
-    }
+<script setup>
+    import { visible, message } from '../utils/toast'
 </script>
 
 <style scoped>
